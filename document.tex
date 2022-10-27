@@ -1,0 +1,93 @@
+\documentclass[13pt]{article}
+
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{bm}
+\usepackage{mathtools}
+\usepackage{dsfont} 
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}} 
+
+\usepackage[backend = biber, style=numeric-comp,
+citestyle=numeric, sorting=nyt]{biblatex} 
+\addbibresource{literature.bib} 
+
+\usepackage{xcolor}
+\usepackage[hidelinks,urlcolor=blue]{hyperref}
+\hypersetup{
+    colorlinks,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor={blue!80!black},
+}
+
+\usepackage[left=3cm, top=1.5cm, includeheadfoot]{geometry}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathrm{Var}}
+\newcommand{\E}{\bm{\mathrm{E}}}
+
+
+\begin{document}
+
+\tableofcontents
+
+\newpage
+
+\setcounter{section}{1} % First chapter in lecture was introduction/motivation
+
+\section{Randomized Matrix Multiplication}
+
+Further reading: \cite{ln_random_linear16}
+
+\begin{algorithm}
+\caption{Randomized matrix multiplication}\label{alg:random_mult}
+\begin{algorithmic}
+    \Require $A \in \R^{m \times n},\, B \in \R^{n \times p}, c \in \N$, probabilities $p_1 = \nu(1), \ldots, p_n = \nu(n)$
+    \Ensure Approximate product $P \in \R^{m \times p}$
+    \For{$t=1,\ldots,c$}
+        \State{Pick $i_t \in [n]$ iid according to $\nu$}
+        \State{Set $C^{(t)} = A^{(i_t)}/\sqrt{cp_{i_t}},\, R_{(t)} = B_{(i_t)}/\sqrt{cp_{i_t}}$}
+    \EndFor
+    \State \Return $P = CR$ \Comment{Calculate with your favorite deterministic algorithm}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{lem}
+    Given matrices $A \in \R^{m \times n},\, B \in \R^{n \times p}$, define
+    \begin{align}\label{eq:random_prod}
+        S = \sum_{t=1}^c \frac{1}{c\nu(i_t)} A^{(i_t)} B_{(i_t)}. \tag{$\ast$}
+    \end{align}
+    Then
+    \[
+        \E[S] = AB,
+    \]
+    and
+    \[
+        \V(S_{ij}) = \frac{1}{c} \sum_{k = 1}^n \frac{A_{ik}^2B_{kj}^2}{\nu(k)} - \frac{1}{c}(AB)^2_{ij}.
+    \]
+\end{lem}
+
+\begin{lem}
+    Given matrices $A \in \R^{m \times n},\, B \in \R^{n \times p}$, let $S$ be
+    as in \eqref{eq:random_prod}.
+    Then
+    \[
+        \E\left[\|AB - S\|_F^2\right] = \sum_{k=1}^n \frac{\|A^{(k)}\|_2^2\|B_{(k)}\|_2^2}{c\nu(k)} - \frac{1}{c} \|AB\|_F^2.
+    \]
+\end{lem}
+
+\newpage
+
+\printbibliography
+
+\end{document}
