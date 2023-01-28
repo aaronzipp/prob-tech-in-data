@@ -1,23 +1,32 @@
 \documentclass[13pt]{article}
 
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
 \usepackage{amsmath, amsthm, amssymb}
 \usepackage{bm}
 \usepackage{mathtools}
-\usepackage{dsfont} 
+\usepackage{dsfont}
+\usepackage{bbm}
 
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{lem}[thm]{Lemma}
 \newtheorem{prop}[thm]{Proposition}
 \newtheorem{cor}[thm]{Corollary}
+\theoremstyle{plain}
+\newtheorem{defi}[thm]{Definition}
+\newtheorem{remark}[thm]{Remark}
+\newtheorem*{ex}{Example}
+\newtheorem*{remark*}{Remark}
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
-\renewcommand{\algorithmicensure}{\textbf{Output:}} 
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
 
 \usepackage[backend = biber, style=numeric-comp,
-citestyle=numeric, sorting=nyt]{biblatex} 
-\addbibresource{literature.bib} 
+citestyle=numeric, sorting=nyt]{biblatex}
+\addbibresource{literature.bib}
 
 \usepackage{xcolor}
 \usepackage[hidelinks,urlcolor=blue]{hyperref}
@@ -31,11 +40,23 @@ citestyle=numeric, sorting=nyt]{biblatex}
 \usepackage[left=3cm, top=1.5cm, includeheadfoot]{geometry}
 
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\V}{\mathrm{Var}}
 \newcommand{\E}{\bm{\mathrm{E}}}
-
+\newcommand{\e}{\mathrm{e}}
+\renewcommand{\P}{\bm{\mathrm{P}}}
+\renewcommand{\O}{\mathcal{O}}
+\newcommand{\NN}{\mathcal{N}}
+\newcommand{\PP}{\mathcal{P}}
+\newcommand{\set}[1]{{\{#1\}}}
+\newcommand{\ind}{\mathbbm{1}}
+\newcommand{\rank}{\mathrm{rank}}
+\newcommand{\ran}{\mathrm{ran}}
+\DeclareMathOperator{\argmin}{\arg\min}
+\DeclareMathOperator{\supp}{supp}
+\newcommand{\til}{\ensuremath{\tilde}}
 
 \begin{document}
 
@@ -86,8 +107,421 @@ Further reading: \cite{ln_random_linear16}
     \]
 \end{lem}
 
+\begin{defi}
+    In the pass efficent model, the only access an algorithm has to the data is via a pass, that is,
+    a sequential read of the entire data set. An algorithm is \emph{pass-efficient} if it requires a small
+    constant number of passes and additional space and time, which are sublinear in the length of the
+    data stream.
+\end{defi}
+
+\begin{algorithm}
+\caption{Random selection}\label{alg:random_select}
+\begin{algorithmic}
+    \Require $\set{a_1, \ldots, a_n}, a_i \ge 0, \sum_{i=1}^{n} a_i > 0$ read in one pass over the data
+    \Ensure $i^\ast, a_{i\ast}$
+    \State{$D = 0$}
+    \For{$i=1,\ldots,n$}
+        \State{$D = D + a$}
+        \State{with probability $\frac{a_i}{D}$, let $i^\ast, a_{i\ast} = a_i$}
+        \Comment{$\P = 1$ if $a_i = D = 0$}
+    \EndFor
+    \State \Return $i^\ast, a_{i\ast} $ \Comment{Calculate with your favorite deterministic algorithm}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{lem}
+    For algorithm \ref{alg:random_select}, the additional storage space required
+    is $O(1)$ and the output $i^\ast$ satisfies $\P(i^\ast = i) = \frac{a_i}{\sum_{j=1}^{n} a_j}$.
+\end{lem}
+
+\begin{thm}
+    Let $S \subset \N$ and let $X_1, \ldots X_L$ be independent random variables
+    with values in $S$. Assumme that $F: S^L \to \R$ satisfies following
+    bounded difference property:
+    \begin{quotation}
+        There exists a constant $\Delta > 0$ such that for every
+        $x_1,\ldots,x_L, x_1', \ldots, x_L' \in S$ it holds that
+        \[
+            \begin{aligned}
+                |F(x_1, \ldots, x_L) - F(x_1', \ldots, x_L')| \le
+                \Delta \sum_{i=1}^{L} \ind\set{x_i \ne x_i'}.
+            \end{aligned}
+        \]
+    \end{quotation}
+    Then one has
+    \[
+        \begin{aligned}
+            \P\left( F\left( X_1,\ldots,X_L \right) - \E F(X_1,\ldots,X_L) \ge t \right)
+            \le \exp\left( - \frac{2t^2}{L\Delta^2} \right) .
+        \end{aligned}
+    \]
+\end{thm}
+
+\begin{thm}
+    Suppose $A \in \R^{m \times n}, B \in \R^{n \times p}, c \in [n]$,
+    and $\nu$ is a probability measure on $[n]$ such that,
+    for some constant $0 < \beta \le 1$,
+    \[
+        \begin{aligned}
+            \nu(k) \ge \frac{\beta\|A^{(k)}\|_2\|B_{(k)}\|_2}{\sum_{\ell}^{n} \|A^{(\ell)}\|_2\|B_{(\ell)}\|_{2}}.
+        \end{aligned}
+    \]
+    Construct $S$ using algorithm \ref{alg:random_mult} as above.
+    Then for all $\delta \in (0, 1)$ and the associated $\eta = 1 + \sqrt{\frac{2}{\beta}\log(\frac{1}{\delta})} $
+    it holds that with probability greater or equal $1 - \delta$ one has
+    \[
+        \begin{aligned}
+            \|AB - S\|_F \le \frac{\eta}{\sqrt{\beta_c}}\|A\|_F\|B\|_F.
+        \end{aligned}
+    \]
+\end{thm}
+
+\begin{remark*}
+    The role of $\beta$ is to measure the amount of deviation from
+    the optimal sampling density.
+\end{remark*}
+
 \newpage
 
-\printbibliography
+\section{Randomized principal component analysis}
+
+Many high-dimensional datasets are intrinisically low-dimensional, that is,
+they are well approximated by a lower dimensional subspace.
+
+\begin{defi}
+    Given $A \in \R^{m \times n}, A_{k} \in \R^{m \times n}$ is a best rank-$k$ approximation for $A$
+    with respect to a norm $\| |\cdot\| |$ if $A_k \in \argmin_{\substack{B \in \R^{m \times n}\\ \rank(B) \le k}} \| |A-B\| |$.
+\end{defi}
+
+\begin{defi}
+    Let $n$ be a power of $2$. Then the $n \times n$ \emph{Hadamard matrix} $\til{H}_n$ is defined recursively as follows
+    \[
+        \begin{aligned}
+            \til{H}_n = \begin{pmatrix} \til{H}_{\frac{n}{2}} & \til{H}_{\frac{n}{2}} \\ \til{H}_{\frac{n}{2}} & -\til{H}_{\frac{n}{2}} \end{pmatrix},
+                \, \til{H}_2 = \begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}.
+        \end{aligned}
+    \]
+    Then \emph{normalized Hadamard} transform is $H_n = \frac{1}{\sqrt{n}} \til{H}_n$.
+    Furthermore, for a random diagonal matrix $D \in \R^{n \times n}$ with independent entries $D_{ii}$
+    with $\P(D_{ii} = 1) = \P(D_{ii} = -1) = \frac{1}{2}$, $HD$ is called \emph{randomized Hadamard transform}
+\end{defi}
+
+\begin{lem}
+    Let $U \in \R^{n \times d}$ be a matrix with orthogonal columns and let the product
+    $HD$ be the $n \times n$ randomized Hadamard transform. Then with probability at least $0.95$,
+    \[
+        \begin{aligned}
+            \|(HDU)_i\|_2^2 \le \frac{2d \log(40nd)}{n}.
+        \end{aligned}
+    \]
+    for all $i \in [n]$.
+\end{lem}
+
+\begin{algorithm}
+\label{alg:low-rank}
+\begin{algorithmic}
+    \Require $A \in \R^{m \times n}$, rank parameter $k \ll \min\set{m, n}$, error parameter $\varepsilon \in (0,\frac{1}{2})$, $c \in \N$
+    \Ensure $\til{U}_k \in \R^{m \times k}$
+    \State Let $S = 0^{n \times c}$
+    \For{$t=1,\ldots,c$}
+        \State{select uniformly at random $i_t \in [n]$ and set $S^{(t)} = \sqrt{\frac{n}{c}} e_{i_{t}}$}
+    \EndFor
+    \State Compute $C = ADHS$ where $HD$ is the randomized Hadamard transform
+    \State Compute $U_C$, an ONB for the column space of $C$ (e.g., via SVD)
+    \State Compute $W = U_C^\top A$ and compute its top $k$ singular vectors $U_{W, k}$
+    \State \Return $\til{U}_k = U_C U_{W, k} $ 
+\end{algorithmic}
+\end{algorithm}
+
+\begin{thm}
+    Let $A \in \R^{m \times n}$, let $k$ be a rank parameter, and let $\varepsilon \in (0,\frac{1}{2})$.
+    If we set $c \ge c_0 \frac{k\log n}{\varepsilon^2} \left( \log\frac{k}{\varepsilon^2} + \log\log n \right)$,
+    then with probability at least $0.85$, Algorithm \ref{alg:low-rank} a matrix $\til{U}_k \in \R^{m \times n}$
+    such that
+    \[
+        \begin{aligned}
+            \|A - \til{U}_k\til{U}_k^\top A\|_F \le (1+\varepsilon)\|A-A_k\|_F.
+        \end{aligned}
+    \]
+    The running time of the algorithm is $\O(mnc)$ 
+\end{thm} 
+
+\begin{remark}
+    Repeating Algorithm \ref{alg:low-rank} for $\left\lceil \log\frac{1}{\delta} / \log c \right\rceil$
+    times and keeping the matrix $\til{U}_k$ that minimizes $\|A-\til{U}_k\til{U}_k^\top A\|_F$ reduces the
+    failure probability to at most $\delta$ for $\delta \in (0,1)$.
+\end{remark}
+
+\begin{lem}
+    Let $U_C$ and $\til{U}_k$ be as in Algorithm \ref{alg:low-rank}
+    (i.e., the columns of $U_C$ are an ONB of $\ran C$).
+    Then
+    \[
+        \begin{aligned}
+            A - \til{U}_k\til{U}_k^\top A = A - U_C(U_C^\top A)_k.
+        \end{aligned}
+    \]
+    In addition, $U_C(U_C^\top A)_k$ is the best rank-$k$ approximation
+    to $A$, with respect to $\|\cdot\|_F$,  that lies within $\ran C$,
+    that is
+    \[
+        \begin{aligned}
+            \|A - U_C(U_C^\top A)_k\|_F^2 = \min_{\rank(Y) = k} \|A - U_CY\|_F^2.
+        \end{aligned}
+    \] 
+\end{lem} 
+
+\begin{lem}
+    Let $U_C$ and $\til{U}_k$ be as in Algorithm \ref{alg:low-rank}.
+    Then
+    \[
+        \begin{aligned}
+            \|A - \til{U}_k\til{U}_k^\top A\|_F^2 \le \|A_k - \til{U}_k\til{U}_k^\top A_k\|_F^2 + \|A_{k, \perp}\|_F^2.
+        \end{aligned}
+    \]
+\end{lem}
+
+\begin{lem}
+    Let $\Phi \in \R^{m \times n}$ with rank-$k$ approximation $\Phi_{k} = U_{\Phi, k} \Sigma_{\Phi, k} V^{\top}_{\Phi, k}$.
+    Let $c \ge k$, $Z \in \R^{n \times c}$ be such that $\rank(V^\top_{\Phi, k}  Z) = k$.
+    Then
+    \[
+        \begin{aligned}
+            \|\Phi_{k} - \Phi Z (\Phi Z)^\dagger\Phi_k\|_F^2 \le \|(\Phi\Phi_k)Z(V^\top_{\Phi, k}Z)^\dagger\|_F^2.
+        \end{aligned}
+    \] 
+\end{lem} 
+
+\begin{lem}
+    Assume that
+    \begin{align*} \label{eq:hadamard-bound}
+        \|(HDV_k)_i\|_2^2 \le \frac{2k\log(40nk)}{n}, \tag{$\ast$}
+    \end{align*}
+    for all $i \in [n]$.
+    Let $c \in \N$ be such that
+    \[
+        \begin{aligned}
+            c \ge \frac{192k}{\varepsilon^2} \log(40nk)\log\left( \frac{192\sqrt{20} k \log(40nk)}{\varepsilon^2} \right).
+        \end{aligned}
+    \]
+    Then with probability at least $0.95$,
+    \[
+        \begin{aligned}
+            \|(V_k^\top DHS)^\dagger - (V_k^\top DHS)^\top\|_2^2 \le 2 \varepsilon^2.
+        \end{aligned}
+    \] 
+\end{lem} 
+
+\begin{lem}
+    Assume that \eqref{eq:hadamard-bound} holds and
+    \[
+        \begin{aligned}
+            c \ge 40k \frac{\log(40nk)}{\varepsilon}.
+        \end{aligned}
+    \]
+    Then with probability at least $0.95$,
+    \[
+        \begin{aligned}
+            \|A_{k, \perp}DHS (V_k^\top DHS)^\top\|_F^2 \le \varepsilon \|A_{k, \perp}\|_F^2.
+        \end{aligned}
+    \] 
+\end{lem}
+
+\begin{remark}
+    This procedure allows us to find an approximation to $U_k$.
+    To find an approximation for $\Sigma_k$ and $V_k$ for $A$ approximately
+    of rank $k$, we note that $A \approx A_k = U_k \Sigma_k V_k^\top$,
+    and therefore
+    \[
+        \begin{aligned}
+            \til{U}_k^\top A \approx \til{U}_k^\top U_k \Sigma_k V_k^\top \approx \Sigma_k V_k^\top,
+        \end{aligned}
+    \]
+    so one proceeds via performing an $SVD$ of $\til{U}_k^\top A$.
+\end{remark}
+
+\newpage
+
+\section{Johnson-Lindenstrauss Embeddings}
+
+\begin{thm}[Johnson-Lindenstrauss-Lemma for Bernoulli matrices]
+    Let $Y \subset \R^N$ with $|Y| = p$ and choose the random matrix
+    $A \in \R^{m \times N}$ with independent entries distributed
+    as $\P(a_{ij} = 1) = \P(a_{ij} = -1) = \frac{1}{2}$,
+    where $m \ge C_1\frac{\log\left( C_2 \frac{p}{\eta} \right)}{\varepsilon^2}$, where $C_1, C_2$
+    are absolute constants.
+    Then with probability at least $1 - \eta$,
+    \[
+        \begin{aligned}
+            (1-\varepsilon)\|y\|_2^2 \le \|\frac{1}{\sqrt{m}}Ay\|_2^2 \le (1+\varepsilon)\|y\|_2^2
+        \end{aligned}
+    \]
+    simultaneously for all $y \in Y$.
+\end{thm}
+
+\begin{remark*}
+    Johnson and Lindenstrauss proved the existence of such matrices,
+    the explicit construction is due to Achlioptas.
+\end{remark*}
+
+\begin{remark*}
+    More abstract proof strategy
+    \begin{itemize}
+        \item Hoeffding $\implies \langle A_{(j)}, y\rangle$ is subgaussian
+        \item $\implies \langle A_{(j)}, y\rangle^2$ is subexponential
+        \item result follows from Bernstein's inequality
+    \end{itemize}
+\end{remark*}
+
+\newpage
+
+\section{Compressed sensing}
+
+\begin{defi}
+    Let $s, N \in \N$. Then the \emph{support} of $x \in \R^N$ is given by
+    $\supp x := \set{j \in [N] : x_j \ne 0}$. The support size is
+    denoted by $\|x\|_0$ and referred to as the \emph{$\ell_0$-norm} (even though it is not a norm).
+    $x$ is $s$-sparse if $\|x\|_0 \le s$, i.e., all but $s$ entries of $x$ vanish.
+\end{defi}
+
+\begin{algorithm}
+\caption{$\ell_1$-minimization}\label{alg:l1_min}
+\begin{algorithmic}
+    \Require $A \in \R^{m \times N},\, y \in \R^{m}$
+    \State Choose $\hat{x} = \argmin_{\substack{\til{x} \in \R^N\\ A\til{x} = y}} \|\til{x}\|_1$  \Comment{Can be recasted a linear program}
+    \State \Return $\hat{x}$ 
+\end{algorithmic}
+\end{algorithm}
+
+\begin{defi}
+    $A \in \R^{m \times N}$ has the \emph{restricted isometry property} of order $s$
+    and level $\delta$ if
+    \[
+        \begin{aligned}
+            (1-\delta)\|x\|_2^2 \le \|Ax\|_2^2 \le (1+\delta)\|x\|_2^2.
+        \end{aligned}
+    \] for all $s$-sparse $x$. The smallest $\delta$ that satisfies the equation
+    is called \emph{restricted isometry constant} of order $s$ and denoted by $\delta_s(A)$.
+\end{defi}
+
+\begin{thm}
+    Suppose for $A \in \R^{m \times N}$, one has $\delta_{25}(A) < \frac{1}{3}$.
+    Then every $s$-sparse vector $x \in \C^N$ is the unique solution of
+    \[
+        \begin{aligned}
+            \argmin\limits_{\til{x} \in \C^N} \|\til{x}\|_1 \text{ s.t. } A\til{x} = Ax.
+        \end{aligned}
+    \]
+\end{thm} 
+
+\begin{defi}
+    Let $T$ be subset of a metric space $(X,d)$. For $t > 0$ the \emph{covering number}
+    $\NN(T,d,t)$ is defined to be the smallest integer $\NN$ such that
+    $T$ can be recovered with ball $B(x_{\ell},t) = \set{x \in X : d(x_\ell,x) \le t},\,\allowbreak x_\ell \in T,\, \ell \in [\NN]$, i.e.,
+    \[
+        \begin{aligned}
+            T \subset \bigcup_{\ell = 1}^\NN B(x_\ell,t).
+        \end{aligned}
+    \]
+    The \emph{packing number} $\PP(T,d,t)$ is defined, for $t > 0$,  as the maximal integer $\PP$
+    such that there are points $x_\ell \in T, \ell \in [\PP]$, which are $t$-separated, i.e.,
+    $d(x_\ell,x_k) \ge t$ for all  $k,\ell \in [\PP], k \ne \ell$.
+\end{defi}
+
+\begin{lem}
+    Let $T$ be a subset of a metric space $(X,d)$ and let $t > 0$. Then
+    \[
+        \begin{aligned}
+            \PP(T,d,2t) \le \NN(T,d,t) \le \PP(T,d,t).
+        \end{aligned}
+    \]
+\end{lem} 
+
+\begin{prop}
+    Let $\| |\cdot\| |$ be some norm on $\R^n$ and let $U$ be a subset of the unit ball.
+    Then the packing number and covering number satisfy, for $t > 0$,
+    \[
+        \begin{aligned}
+            \NN(U, \| |\cdot\| |,t) \le \PP(U, \| |\cdot\| |,t) \le (1+\frac{2}{t})^n.
+        \end{aligned}
+    \]
+\end{prop}
+
+\begin{cor}
+    Let $\Sigma_s := \set{x \in \R^N :\, \|x\|_2 = 1, \|x\|_0 \le s}$.
+    Then $\NN(\Sigma_s,\|\cdot\|_2,t) \le \left( \frac{\e N}{s} \right)^s \left( 1 +\frac{2}{t} \right)^s$.
+\end{cor} 
+
+\begin{thm} \label{thm:binrip}
+    Consider the random matrix $A \in \R^{m \times N}$ with independent entries
+    $a_{ij}$ with distribution $\P(a_{ij} = 1) = \P(a_{ij} = -1) = \frac{1}{2}$.
+    Then $\frac{1}{\sqrt{m}}A$ has the restricted isometry property of order $s$ and level
+    $\delta$ with probability at least $1 - \eta$ provided
+    \[
+        \begin{aligned}
+            m \ge \delta^{-2} \left( D_1s\log\left( D_2 \frac{N}{s} \right) + D_3\log(D_4\eta^{-1}) \right),
+        \end{aligned}
+    \]
+    where $D_1,D_2,D_3,D_4$ are absolute constants.
+\end{thm}
+
+\begin{prop}
+    Let $u,v \in \R^N$ be vectors with $|\supp(u) \cup \supp(v)| \le s$ and $\langle u,v \rangle = 0$.
+    Then
+    \[
+        \begin{aligned}
+            |\langle Au, Av \rangle| \le \delta_s(A) \|u\|_2\|v\|_2.
+        \end{aligned}
+    \]
+\end{prop}
+
+\begin{cor}
+    Let $m, A$ be as in Theorem \ref{thm:binrip}. Then with probability at least
+    $1 - \eta$ every $s$-sparse $x$ can be recovered from $y = Ax$ via Algorithm \ref{alg:l1_min}.
+\end{cor}
+
+\begin{thm}
+    Fix $\eta > 0$ and $\varepsilon \in (0,1)$ and consider a finite set $E \subset \R^N$ of
+    cardinality $|E| = p$. Set $k \ge C_1 \log\left( \frac{C_2p}{\eta} \right)$ and suppose
+    that $A \in \R^{m \times N}$ has the restricted isometry property of order $k$ and level
+    $\delta \le \frac{\varepsilon}{4}$. Let $\xi \in \R^N$ be a random vector with iid
+    Rademacher entries. Then with probability exceeding $1 - \eta$,
+    \[
+        \begin{aligned}
+            (1-\varepsilon)\|x\|_2^2 \le \|AD_{\xi} x\|_2^2 \le (1+\varepsilon)\|x\|_2^2.
+        \end{aligned}
+    \]
+\end{thm} 
+
+\begin{thm}
+    Let $F \in \C^{N \times N}$ be a one- or two-dimensional DFT matrix.
+    For $m \ge \delta^{-2} s \log^4 N$, construct $A \in \C^{m \times N}$ by selecting
+    $m$ rows of $\sqrt{\frac{N}{m}} F$ independently at random (with replacement)
+    according to the uniform distribution on $[N]$.
+    Then with probability exceeding $1 - N^{\log^3 N}$, $A$ has the
+    restricted isometry property of level $\delta$ and order $s$.
+\end{thm}
+
+\begin{thm}
+    Let $P_\Omega$ be the restriction operator to an abitrary (deterministic) subset
+    of size $|\Omega| = m \ge C \delta^{-2} s\log^4 N$ and let
+    $\xi$ be a random vector with iid Rademacher entries. Then the matrix $A \in \R^{m \times N}$ 
+    given by
+    \[
+        \begin{aligned}
+            Av = \frac{1}{\sqrt{m}} P_{\Omega} \xi \ast v,
+        \end{aligned}
+    \]
+    has the restricted isometry property of order $s$ and level $\delta$
+    with probability exceeding $1 - N^{-\log^3 N}$.
+\end{thm}
+
+\newpage
+
+\section{Matrix completion}
+
+\newpage
+
+\printbibliography[heading=bibintoc]
 
 \end{document}
