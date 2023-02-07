@@ -2,6 +2,7 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{enumitem}
 
 \usepackage{amsmath, amsthm, amssymb}
 \usepackage{bm}
@@ -56,6 +57,7 @@ citestyle=numeric, sorting=nyt]{biblatex}
 \newcommand{\ran}{\mathrm{ran}}
 \DeclareMathOperator{\argmin}{\arg\min}
 \DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\mspan}{span}
 \newcommand{\til}{\ensuremath{\tilde}}
 
 \begin{document}
@@ -519,6 +521,67 @@ they are well approximated by a lower dimensional subspace.
 \newpage
 
 \section{Matrix completion}
+
+\begin{defi}
+    Let $U$ be a subspace of $\R^n$ of dimension $r$ and $P_U$ be the orthogonal projection onto
+    $U$. Then the \emph{coherence} of $U$ (relative to the standard basis) is defined to be
+    \[
+        \begin{aligned}
+            \mu(U) := \frac{n}{r} \max_{1 \le j \le n} \|P_U e_j\|_2^2.
+        \end{aligned}
+    \]
+\end{defi}
+
+\begin{defi}
+    Let $M \in \R^{n_1 \times n_2}$ and let $M = U \Sigma V^\ast, U \in \R^{n_1 \times r}$ orthogonal,
+    $\Sigma \in \R_+^{r \times r}$ diagonal, $V \in \R^{n_2 \times r}$ orthogonal, be its
+    singular value decomposition. Then the \emph{nuclear norm} of $M$ is given by
+    \[
+        \begin{aligned}
+            \|M\|_\ast = \sum_{i=1}^{r} |\Sigma_{ii}|.
+        \end{aligned}
+    \] 
+\end{defi} 
+
+\begin{algorithm}
+\caption{nuclear norm minimization}\label{alg:nuclear}
+\begin{algorithmic}
+    \Require Index pairs $\Omega = \set{(i_\ell,j_\ell)}_{\ell=1}^m \subset [n_1] \times [n_2]$
+        and associated entries $M_{i_\ell j_{\ell}}$.
+    \State \Return $\hat{M} = \argmin\set{\|\til{M}\|_\ast : \til{M} \in \R^{n_1 \times n_2} \text{ s.t. } \til{M}_{i_\ell j_\ell} = M_{i_\ell j_\ell}}$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{prop}
+    The probability that Algorithm \ref{alg:nuclear} fails to recover $M$ when
+    the set of observed entries is sampled uniformly at random
+    from the collection of subsets of $[n_1] \times [n_2]$ of size $m$
+    is less than or equal to the probability that Algorithm \ref{alg:l1_min}
+    fails to recover $M$ when $m$ entries are sampled independently with replacement.
+\end{prop}
+
+\begin{thm}
+    Let $M \in \R^{n_1 \times n_2}$ be of rank $r$ with singular value decomposition
+    $M = U\Sigma V^\ast$. Without loss of generality restrict to the case that
+    $n_1 \le n_2$. Assume that
+    \begin{enumerate}[label=(A\arabic*), start=0]
+        \item The linear spaces $\mathcal{U} = \mspan\set{U^{(1)}, \ldots, U^{(r)}}, \mathcal{V} = \mspan\set{V^{(1)}, \ldots, V^{(r)}}$
+            satisfy $\mu(\mathcal{U}) \le \mu_0, \mu(\mathcal(V)) \le \mu_0$ for some $\mu_0 > 0$.
+        \item The matrix $UV^\ast$ has a maximum entry bounded by $\mu_1\sqrt{\frac{r}{n_1n_2}}$ in absolute value
+            for some $\mu_1 > 0$.
+    \end{enumerate}
+    Suppose $m$ entries of $M$ are observed at locations $(i_{\ell}, j_\ell)$ sampled uniformly at random.
+    Then if
+    \[
+        \begin{aligned}
+            m \ge C_1(\alpha) (n_1 + n_2) \max(\mu_1^2,\mu_0) \log^2(C_2n_2),
+        \end{aligned}
+    \]
+    the minimization problem described by Algorithm \ref{alg:nuclear} has a unique
+    minimizer, which equals $M$, with probability at least $1 - C_3(n_1 + n_2)^{-\alpha}$.
+    Here $\alpha > 0$ is abitrary, $C_1(\alpha)$ is a constant that only depends on $\alpha$,
+    and $C_2,C_3$ are absolute constants.
+\end{thm}
 
 \newpage
 
