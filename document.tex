@@ -231,7 +231,7 @@ they are well approximated by a lower dimensional subspace.
     \State Compute $C = ADHS$ where $HD$ is the randomized Hadamard transform
     \State Compute $U_C$, an ONB for the column space of $C$ (e.g., via SVD)
     \State Compute $W = U_C^\top A$ and compute its top $k$ singular vectors $U_{W, k}$
-    \State \Return $\til{U}_k = U_C U_{W, k} $ 
+    \State \Return $\til{U}_k = U_C U_{W, k} $
 \end{algorithmic}
 \end{algorithm}
 
@@ -245,8 +245,8 @@ they are well approximated by a lower dimensional subspace.
             \|A - \til{U}_k\til{U}_k^\top A\|_F \le (1+\varepsilon)\|A-A_k\|_F.
         \end{aligned}
     \]
-    The running time of the algorithm is $\O(mnc)$ 
-\end{thm} 
+    The running time of the algorithm is $\O(mnc)$
+\end{thm}
 
 \begin{remark}
     Repeating Algorithm \ref{alg:low-rank} for $\left\lceil \log\frac{1}{\delta} / \log c \right\rceil$
@@ -270,8 +270,8 @@ they are well approximated by a lower dimensional subspace.
         \begin{aligned}
             \|A - U_C(U_C^\top A)_k\|_F^2 = \min_{\rank(Y) = k} \|A - U_CY\|_F^2.
         \end{aligned}
-    \] 
-\end{lem} 
+    \]
+\end{lem}
 
 \begin{lem}
     Let $U_C$ and $\til{U}_k$ be as in Algorithm \ref{alg:low-rank}.
@@ -291,8 +291,8 @@ they are well approximated by a lower dimensional subspace.
         \begin{aligned}
             \|\Phi_{k} - \Phi Z (\Phi Z)^\dagger\Phi_k\|_F^2 \le \|(\Phi\Phi_k)Z(V^\top_{\Phi, k}Z)^\dagger\|_F^2.
         \end{aligned}
-    \] 
-\end{lem} 
+    \]
+\end{lem}
 
 \begin{lem}
     Assume that
@@ -311,8 +311,8 @@ they are well approximated by a lower dimensional subspace.
         \begin{aligned}
             \|(V_k^\top DHS)^\dagger - (V_k^\top DHS)^\top\|_2^2 \le 2 \varepsilon^2.
         \end{aligned}
-    \] 
-\end{lem} 
+    \]
+\end{lem}
 
 \begin{lem}
     Assume that \eqref{eq:hadamard-bound} holds and
@@ -326,7 +326,7 @@ they are well approximated by a lower dimensional subspace.
         \begin{aligned}
             \|A_{k, \perp}DHS (V_k^\top DHS)^\top\|_F^2 \le \varepsilon \|A_{k, \perp}\|_F^2.
         \end{aligned}
-    \] 
+    \]
 \end{lem}
 
 \begin{remark}
@@ -391,7 +391,7 @@ they are well approximated by a lower dimensional subspace.
 \begin{algorithmic}
     \Require $A \in \R^{m \times N},\, y \in \R^{m}$
     \State Choose $\hat{x} = \argmin_{\substack{\til{x} \in \R^N\\ A\til{x} = y}} \|\til{x}\|_1$  \Comment{Can be recasted a linear program}
-    \State \Return $\hat{x}$ 
+    \State \Return $\hat{x}$
 \end{algorithmic}
 \end{algorithm}
 
@@ -414,7 +414,7 @@ they are well approximated by a lower dimensional subspace.
             \argmin\limits_{\til{x} \in \C^N} \|\til{x}\|_1 \text{ s.t. } A\til{x} = Ax.
         \end{aligned}
     \]
-\end{thm} 
+\end{thm}
 
 \begin{defi}
     Let $T$ be subset of a metric space $(X,d)$. For $t > 0$ the \emph{covering number}
@@ -437,7 +437,7 @@ they are well approximated by a lower dimensional subspace.
             \PP(T,d,2t) \le \NN(T,d,t) \le \PP(T,d,t).
         \end{aligned}
     \]
-\end{lem} 
+\end{lem}
 
 \begin{prop}
     Let $\| |\cdot\| |$ be some norm on $\R^n$ and let $U$ be a subset of the unit ball.
@@ -452,7 +452,7 @@ they are well approximated by a lower dimensional subspace.
 \begin{cor}
     Let $\Sigma_s := \set{x \in \R^N :\, \|x\|_2 = 1, \|x\|_0 \le s}$.
     Then $\NN(\Sigma_s,\|\cdot\|_2,t) \le \left( \frac{\e N}{s} \right)^s \left( 1 +\frac{2}{t} \right)^s$.
-\end{cor} 
+\end{cor}
 
 \begin{thm} \label{thm:binrip}
     Consider the random matrix $A \in \R^{m \times N}$ with independent entries
@@ -493,7 +493,7 @@ they are well approximated by a lower dimensional subspace.
             (1-\varepsilon)\|x\|_2^2 \le \|AD_{\xi} x\|_2^2 \le (1+\varepsilon)\|x\|_2^2.
         \end{aligned}
     \]
-\end{thm} 
+\end{thm}
 
 \begin{thm}
     Let $F \in \C^{N \times N}$ be a one- or two-dimensional DFT matrix.
@@ -507,7 +507,7 @@ they are well approximated by a lower dimensional subspace.
 \begin{thm}
     Let $P_\Omega$ be the restriction operator to an abitrary (deterministic) subset
     of size $|\Omega| = m \ge C \delta^{-2} s\log^4 N$ and let
-    $\xi$ be a random vector with iid Rademacher entries. Then the matrix $A \in \R^{m \times N}$ 
+    $\xi$ be a random vector with iid Rademacher entries. Then the matrix $A \in \R^{m \times N}$
     given by
     \[
         \begin{aligned}
@@ -540,8 +540,8 @@ they are well approximated by a lower dimensional subspace.
         \begin{aligned}
             \|M\|_\ast = \sum_{i=1}^{r} |\Sigma_{ii}|.
         \end{aligned}
-    \] 
-\end{defi} 
+    \]
+\end{defi}
 
 \begin{algorithm}
 \caption{nuclear norm minimization}\label{alg:nuclear}
@@ -560,7 +560,7 @@ they are well approximated by a lower dimensional subspace.
     fails to recover $M$ when $m$ entries are sampled independently with replacement.
 \end{prop}
 
-\begin{thm}
+\begin{thm}\label{thm:uniq-minimizer}
     Let $M \in \R^{n_1 \times n_2}$ be of rank $r$ with singular value decomposition
     $M = U\Sigma V^\ast$. Without loss of generality restrict to the case that
     $n_1 \le n_2$. Assume that
@@ -582,6 +582,52 @@ they are well approximated by a lower dimensional subspace.
     Here $\alpha > 0$ is abitrary, $C_1(\alpha)$ is a constant that only depends on $\alpha$,
     and $C_2,C_3$ are absolute constants.
 \end{thm}
+
+\begin{prop}
+    Suppose there exists a $Y$ in the range of $R_\Omega$ such that
+    \[
+        \begin{aligned}
+            \|P_T(Y) - UV^\ast\|_F \le \sqrt{\frac{r}{2n_2}}, \|P_{T^\perp}(Y)\| < \frac{1}{2}.
+        \end{aligned}
+    \]
+    In addition assume that
+    \[
+        \begin{aligned}
+            \frac{n_1n_2}{m}\|P_TR_\Omega P_T - \frac{m}{n_1n_2}P_T\| \le \frac{1}{2},
+            \|R_\Omega\| \le \frac{1}{3\sqrt{2}} C_1(\alpha)^{\frac{1}{2}} \log(C_2n_2),
+        \end{aligned}
+    \]
+    where $m$ and $C_1(\alpha)$ are as in Theorem \ref{thm:uniq-minimizer}.
+    Then Algorithm \ref{alg:nuclear} has a unique minimizer, which equals $M$.
+\end{prop}
+
+\begin{thm}[Non-commutative Bernstein inequality]
+    Let $X_1,\ldots, X_L$ be independent mean-zero random variables of dimension
+    $d_1 \times d_2$. Set $\sigma^2 = \max \set{\|\sum_{k=1}^{L} \E X_kX_k^\top\|, \|\sum_{k=1}^{L} \E X_k^\top X_k\|}$
+    and suppose that $\|X_k\| \le M$ almost surely for all $k \in [L]$. Then for any
+    $\tau > 0$,
+    \[
+        \begin{aligned}
+            \P\left( \|\sum_{k=1}^{L} X_k\| > \tau \right) \le (d_1+d_2) \exp\left( \frac{-\tau^2/2}{\sigma^2 + \frac{M\tau}{3}} \right) .
+        \end{aligned}
+    \]
+\end{thm}
+
+\begin{thm}
+    Suppose $\Omega$ is a set of entries of size $m$ sampled independently and uniformly
+    with replacement. Then for all $\alpha > 0$,
+    \[
+        \begin{aligned}
+            \frac{n_1n_2}{m}\|P_T R_\Omega P_T - \frac{m}{n_1n_2}P_T\| \le \sqrt{C_1'(\alpha)}\mu_0\frac{r(n_1+n_2)\log n_2}{m}
+        \end{aligned}
+    \]
+    with probability at least $1 - 2n_2^{-\alpha}$ provided
+    $m > C_1'(\alpha)\mu_0 r(n_1+n_2)\log n_2$.
+\end{thm}
+
+\begin{prop}
+    $\P\left(\|R_\Omega\| \ge 27 \beta \log(n_2)\right) \le n_2^{4-9\beta}$.
+\end{prop}
 
 \newpage
 
